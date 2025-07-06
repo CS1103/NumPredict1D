@@ -26,7 +26,7 @@
 * **Grupo**: `group_3_custom_name`
 * **Integrantes**:
 
-  * Alumno A – 209900001 (Responsable de investigación teórica)
+  * Jhogan Haldo Pachacutec Aguilar – 202410582 (Responsable de investigación teórica)
   * Alumno B – 209900002 (Desarrollo de la arquitectura)
   * Alumno C – 209900003 (Implementación del modelo)
   * Alumno D – 209900004 (Pruebas y benchmarking)
@@ -187,7 +187,7 @@ Por el contrario, Adaptive Moment Estimation (Adam) combina los beneficios de Ad
 
 | Tarea                     | Miembro  | Rol                       |
 | ------------------------- | -------- | ------------------------- |
-| Investigación teórica     | Alumno A | Documentar bases teóricas |
+| Investigación teórica     | Jhogan Haldo Pachacutec Aguilar | Documentar bases teóricas |
 | Diseño de la arquitectura | Alumno B | UML y esquemas de clases  |
 | Implementación del modelo | Alumno C | Código C++ de la NN       |
 | Pruebas y benchmarking    | Alumno D | Generación de métricas    |
