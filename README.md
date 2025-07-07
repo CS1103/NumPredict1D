@@ -360,7 +360,8 @@ Los tests proporcionan información detallada sobre:
 - **Estado de componentes**: Cada test indica si los componentes funcionan correctamente
 - **Rendimiento**: Tiempos de ejecución y eficiencia computacional
 - **Calidad de convergencia**: Métricas de pérdida y precisión
-- **Robustez**: Capacidad del sistema para manejar diferentes tipos de datos y arquitecturas 
+- **Robustez**: Capacidad del sistema para manejar diferentes tipos de datos y arquitecturas
+
 
 Una ejecución exitosa de todos los tests garantiza que el sistema está listo para experimentos más complejos y datasets reales.
 
