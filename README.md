@@ -117,40 +117,252 @@ El entrenamiento de redes neuronales requiere optimizadores eficientes. Uno de l
 
 Por el contrario, Adaptive Moment Estimation (Adam) combina los beneficios de AdaGrad y RMSProp, ajustando la tasa de aprendizaje por parámetro mediante momentos del gradiente y su cuadrado. Este método fue introducido por Kingma y Ba en 2015 y es ampliamente utilizado por su eficiencia y robustez [7].
 
-
-
-
-
-
 ---
 
-### 2. Diseño e implementación
+# 2. Diseño e implementación
 
-#### 2.1 Arquitectura de la solución
+## 2.1 Arquitectura de la solución
 
-* **Patrones de diseño**: ejemplo: Factory para capas, Strategy para optimizadores.
-* **Estructura de carpetas (ejemplo)**:
+### 2.1.1 Patrones de diseño implementados
 
-  ```
-  proyecto-final/
-  ├── src/
-  │   ├── layers/
-  │   ├── optimizers/
-  │   └── main.cpp
-  ├── tests/
-  └── docs/
-  ```
+La arquitectura de la red neuronal desarrollada integra varios patrones de diseño fundamentales, los cuales aportan flexibilidad, extensibilidad y mantenibilidad al sistema. A continuación, se describen los principales patrones empleados, su propósito general y la forma en que se materializan en la implementación:
 
-#### 2.2 Manual de uso y casos de prueba
+#### a) Factory Pattern (Patrón Fábrica)
 
-* **Cómo ejecutar**: `./build/neural_net_demo input.csv output.csv`
-* **Casos de prueba**:
+El patrón Factory tiene como objetivo delegar la creación de objetos a clases especializadas, evitando así acoplar el código cliente a implementaciones concretas. En este proyecto, se encuentra implementado en el archivo `nn_factory.h` mediante distintas fábricas responsables de encapsular la lógica de construcción e inicialización de los componentes principales:
 
-  * Test unitario de capa densa.
-  * Test de función de activación ReLU.
-  * Test de convergencia en dataset de ejemplo.
+- **LayerFactory**: Facilita la creación de diversos tipos de capas (Dense, ReLU, Sigmoid) a través de métodos estáticos, permitiendo especificar parámetros como dimensiones o funciones de inicialización personalizadas.
+- **OptimizerFactory**: Centraliza la generación de optimizadores (SGD, Adam) configurables, posibilitando modificar algoritmos de optimización sin alterar el resto del sistema.
+- **LossFactory**: Encargada de instanciar funciones de pérdida (MSE, BCE) según las predicciones y valores reales correspondientes.
+- **NeuralNetworkFactory**: Actúa como fachada unificada que delega la creación de componentes a las fábricas específicas, ofreciendo una interfaz única para construir redes neuronales completas de manera consistente y modular.
 
-> *Personalizar rutas, comandos y casos reales.*
+#### b) Strategy Pattern (Patrón Estrategia)
+
+Este patrón define una familia de algoritmos intercambiables, permitiendo seleccionar la estrategia más adecuada en tiempo de ejecución sin modificar el contexto en el que se utilizan. Su implementación se refleja principalmente en `nn_interfaces.h`, donde se abstraen comportamientos clave del entrenamiento:
+
+- **Optimizadores**: A través de la interfaz `IOptimizer<T>`, que define un contrato común para algoritmos como SGD y Adam. Gracias a esta interfaz, es posible intercambiar optimizadores dinámicamente, favoreciendo la experimentación con distintas técnicas de actualización de parámetros.
+- **Funciones de pérdida**: La interfaz `ILoss<T,DIMS>` encapsula distintas métricas de error (MSELoss, BCELoss), lo que permite sustituir la función objetivo sin modificar la lógica general del entrenamiento.
+- **Capas de activación**: Las clases ReLU y Sigmoid implementan la interfaz `ILayer<T>`, permitiendo utilizar diferentes funciones de activación en la misma arquitectura, con la posibilidad de combinarlas de forma flexible.
+
+#### c) Template Method Pattern (Patrón Método Plantilla)
+
+El patrón Template Method establece el esqueleto de un algoritmo en un método base, delegando a subclases o parámetros la definición de ciertos pasos específicos, permitiendo así personalizar partes del comportamiento sin modificar la estructura general. En este caso, se encuentra implementado en el método `train()` de la clase `NeuralNetwork`, que define el flujo completo del proceso de entrenamiento:
+
+- Validación de parámetros y de la estructura de la red.
+- Inicialización del optimizador.
+- Iteración a lo largo de las épocas.
+- Procesamiento por lotes, incluyendo la propagación hacia adelante, cálculo de la pérdida y retropropagación.
+- Actualización de parámetros mediante el optimizador.
+- Cálculo de métricas y registro de resultados.
+
+La especificidad de las funciones de pérdida y del optimizador se inyecta mediante parámetros de plantilla, lo que permite modificar el comportamiento del entrenamiento con alta flexibilidad, manteniendo la estructura global del algoritmo intacta.
+
+### 2.1.2 Estructura de carpetas
+
+Para garantizar la organización, la escalabilidad y la mantenibilidad del proyecto, se ha adoptado una estructura de carpetas modular que facilita la separación lógica de responsabilidades y la integración de los diferentes componentes de la red neuronal. A continuación, se detalla la jerarquía de directorios y archivos que conforman el proyecto NumPredictID, donde se distribuyen los módulos de procesamiento de datos, definición de la arquitectura neuronal, funciones de pérdida, optimizadores, pruebas unitarias, documentación y otros recursos necesarios para el correcto funcionamiento y la extensibilidad del sistema:
+
+```
+NumPredictID/
+├── cmake-build-debug/
+├── dataset/
+│   ├── results/
+│   │   ├── experiment_results_1.csv
+│   │   ├── experiment_results_2.csv
+│   │   ├── experiment_results_3.csv
+│   │   ├── experiment_results_4.csv
+│   │   └── experiment_results_5.csv
+│   └── training/
+│       ├── mnist_test.csv
+│       └── mnist_train.csv
+├── docs/
+│   ├── BIBLIOGRAFIA.md
+│   └── help_program.cpp
+├── include/
+│   └── utec/
+│       ├── activations/
+│       │   └── nn_activation.h
+│       ├── algebra/
+│       │   └── tensor.h
+│       ├── data_processing/
+│       ├── factories/
+│       │   └── nn_factory.h
+│       ├── loss_functions/
+│       │   └── nn_loss.h
+│       ├── neural_network/
+│       │   ├── neural_network.h
+│       │   ├── nn_dense.h
+│       │   └── nn_interfaces.h
+│       └── optimizers/
+│           └── nn_optimizer.h
+├── src/
+│   ├── config.h
+│   ├── experiment_runner.cpp
+│   └── trainer.h
+├── tests/
+│   ├── activation_test/
+│   │   ├── main_test_activations.cpp
+│   │   └── test_activations.h
+│   ├── convergence_test/
+│   │   ├── main_test_convergence.cpp
+│   │   └── test_convergence.h
+│   ├── layer_test/
+│   │   ├── main_test_dense_layer.cpp
+│   │   └── test_dense_layer.h
+│   ├── main_all_tests.cpp
+│   └── test_base.h
+├── .gitignore
+├── CMakeLists.txt
+└── README.md
+```
+
+## 2.2 Manual de uso y casos de prueba
+
+### 2.2.1 Cómo ejecutar
+
+El sistema de red neuronal se puede ejecutar de múltiples maneras según las necesidades del usuario. Los ejecutables se encuentran en la carpeta `build/` después de la compilación, y también pueden ejecutarse directamente desde IDEs como CLion usando las configuraciones de ejecución disponibles.
+
+#### Experimentos principales
+```bash
+# Ejecutar el sistema principal de experimentos
+./build/ExperimentRunner
+```
+
+Este comando lanza un sistema interactivo que permite:
+- Ver las configuraciones disponibles
+- Ejecutar experimentos específicos por nombre o número
+- Ejecutar todos los experimentos disponibles
+- Ejecutar experimentos seleccionados
+- Visualizar resultados actuales
+
+#### Ayuda y documentación
+```bash
+# Mostrar ejecutables del programa y opciones disponibles
+./build/show_help
+```
+
+#### Ejecución de tests
+```bash
+# Ejecutar todos los tests unitarios en secuencia
+./build/run_all_tests
+
+# Ejecutar tests específicos para validación individual
+./build/test_dense_layer      # Valida funcionamiento de capas densas
+./build/test_activations      # Verifica funciones de activación
+./build/test_convergence      # Prueba capacidad de convergencia
+```
+
+### 2.2.2 Casos de prueba detallados
+
+El sistema incluye una suite completa de tests unitarios que valida el correcto funcionamiento de todos los componentes críticos de la red neuronal:
+
+#### a) Test unitario de capa densa (`test_dense_layer`)
+- **Ejecutable**: `./build/test_dense_layer`
+- **Propósito**: Valida el funcionamiento completo de las capas densas (fully connected)
+- **Casos específicos cubiertos**:
+  - **Creación de capas**: Verifica la correcta instanciación de capas densas con diferentes dimensiones (3→2, 10→5, 1→1)
+  - **Propagación hacia adelante**: Prueba el forward pass con tensores de entrada de diferentes tamaños, verificando que las dimensiones de salida sean correctas y que los valores no sean triviales
+  - **Propagación hacia atrás**: Valida el backward pass calculando gradientes correctos y verificando que tengan las dimensiones apropiadas
+  - **Manejo de lotes**: Prueba el procesamiento con diferentes tamaños de batch (1, 10, 100 muestras)
+  - **Transformaciones matriciales**: Confirma que las operaciones de multiplicación matriz-vector se ejecuten correctamente
+
+#### b) Test de funciones de activación (`test_activations`)
+- **Ejecutable**: `./build/test_activations`
+- **Propósito**: Verifica la implementación correcta de las funciones de activación y sus derivadas
+- **Casos específicos cubiertos**:
+  - **Función ReLU**:
+    - Valores positivos se mantienen sin cambios
+    - Valores negativos se convierten a cero
+    - Valores mixtos se procesan correctamente
+    - Comportamiento en el punto x=0
+  - **Función Sigmoid**:
+    - Salidas en el rango válido [0, 1]
+    - Valores específicos: sigmoid(0)=0.5, sigmoid(±∞)→0/1
+    - Comportamiento con valores extremos
+  - **Propagación hacia atrás de activaciones**:
+    - Gradientes de ReLU: 0 para valores negativos, 1 para positivos
+    - Gradientes de Sigmoid: valores positivos menores que 1
+    - Correcta implementación de las derivadas
+
+#### c) Test de convergencia (`test_convergence`)
+- **Ejecutable**: `./build/test_convergence`
+- **Propósito**: Valida que el modelo puede converger exitosamente en diferentes tipos de problemas
+- **Casos específicos cubiertos**:
+  - **Problema XOR**:
+    - Dataset: 4 muestras con patrón XOR clásico
+    - Arquitectura: 2→8→4→1 con ReLU y Sigmoid
+    - Objetivo: Resolver problema no linealmente separable
+    - Métricas: Reducción de pérdida >50%, precisión >60%
+  - **Regresión lineal**:
+    - Dataset: 100 muestras siguiendo y = 2x + 1 + ruido
+    - Arquitectura: 1→16→8→1 con ReLU
+    - Objetivo: Aproximar función lineal
+    - Métricas: Reducción de pérdida >90%, MSE <0.1
+  - **Clasificación binaria**:
+    - Dataset: 200 muestras en dos clases separables
+    - Arquitectura: 2→16→8→1 con ReLU y Sigmoid
+    - Objetivo: Separar clases linealmente
+    - Métricas: Precisión >90%, mejora significativa en pérdida
+  - **Validación de optimización**:
+    - Uso de diferentes optimizadores (Adam, SGD)
+    - Diferentes funciones de pérdida (MSE, BCE)
+    - Medición de tiempos de entrenamiento
+    - Verificación de estabilidad numérica
+
+#### d) Suite completa de tests (`run_all_tests`)
+- **Ejecutable**: `./build/run_all_tests`
+- **Propósito**: Ejecuta todos los tests unitarios en secuencia proporcionando un reporte completo
+- **Características**:
+  - Reporte consolidado con estado de cada test
+  - Medición de tiempo total de ejecución
+  - Cálculo de tasa de éxito general
+  - Identificación específica de tests fallidos
+  - Resumen estadístico de la suite completa
+
+### Criterios de éxito
+
+Un sistema funcionando correctamente debe cumplir:
+- **Tasa de éxito**: 100% en todos los tests unitarios
+- **Convergencia**: Reducción demonstrable de la función de pérdida
+- **Precisión**: Mejora significativa en métricas de evaluación
+- **Estabilidad**: Ausencia de errores numéricos o desbordamientos
+- **Rendimiento**: Tiempos de ejecución razonables
+
+### Estructura de archivos (entrada/salida)
+
+#### Archivos de entrada esperados:
+- **Entrenamiento**: `../dataset/training/mnist8_train.csv`
+- **Prueba**: `../dataset/training/mnist8_test.csv`
+
+#### Archivos de salida generados:
+- **Resultados**: `../dataset/results/experiment_results_[numero].csv`
+
+### Ejemplo de flujo de trabajo
+
+```bash
+# 1. Compilar el proyecto
+mkdir build && cd build
+cmake ..
+make
+
+# 2. Verificar funcionamiento del sistema
+./run_all_tests
+
+# 3. Ejecutar experimentos específicos
+./ExperimentRunner
+
+# 4. Analizar resultados
+# Los archivos CSV contienen métricas detalladas de cada experimento
+```
+
+### Interpretación de resultados
+
+Los tests proporcionan información detallada sobre:
+- **Estado de componentes**: Cada test indica si los componentes funcionan correctamente
+- **Rendimiento**: Tiempos de ejecución y eficiencia computacional
+- **Calidad de convergencia**: Métricas de pérdida y precisión
+- **Robustez**: Capacidad del sistema para manejar diferentes tipos de datos y arquitecturas 
+
+Una ejecución exitosa de todos los tests garantiza que el sistema está listo para experimentos más complejos y datasets reales.
 
 ---
 
