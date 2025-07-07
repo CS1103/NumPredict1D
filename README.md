@@ -362,6 +362,7 @@ Los tests proporcionan información detallada sobre:
 - **Calidad de convergencia**: Métricas de pérdida y precisión
 - **Robustez**: Capacidad del sistema para manejar diferentes tipos de datos y arquitecturas
 
+
 Una ejecución exitosa de todos los tests garantiza que el sistema está listo para experimentos más complejos y datasets reales.
 
 ---
