@@ -29,7 +29,7 @@
   * Jhogan Haldo Pachacutec Aguilar – 202410582 (Responsable de investigación teórica)
   * Alumno B – 209900002 (Desarrollo de la arquitectura)
   * Alumno C – 209900003 (Implementación del modelo)
-  * Alumno D – 209900004 (Pruebas y benchmarking)
+  * Alessandro Facundo Freed Monzón Gallegos – 202410414 (Pruebas y benchmarking)
   * Alumno E – 209900005 (Documentación y demo)
 
 > *Nota: Reemplazar nombres y roles reales.*
@@ -382,19 +382,86 @@ Una ejecución exitosa de todos los tests garantiza que el sistema está listo p
 
 * **Métricas de ejemplo**:
 
-  * Iteraciones: 1000 épocas.
-  * Tiempo total de entrenamiento: 2m30s.
-  * Precisión final: 92.5%.
+  * Número de configuraciones evaluadas: 8  
+  * Repeticiones por configuración: 5  
+  * Precisión máxima obtenida: 92.5%  
+  * Tiempo promedio de entrenamiento (30 épocas): ~2850 ms  
+  * Tiempo promedio con learning rate 0.1: 28% menor que con 0.001
+
 * **Ventajas/Desventajas**:
 
-  * * Código ligero y dependencias mínimas.
-  * – Sin paralelización, rendimiento limitado.
+  * Código modular, experimental y reutilizable.  
+  * Análisis estadístico automatizado con pandas/seaborn.  
+  * Entrenamiento secuencial sin paralelización.  
+  * Falta de normalización explícita o procesamiento de entrada.
+
 * **Mejoras futuras**:
 
-  * Uso de BLAS para multiplicaciones (Justificación).
-  * Paralelizar entrenamiento por lotes (Justificación).
+  * Paralelización por lotes (mejora esperada basada en Amdahl’s Law).  
+  * Implementación con cuBLAS u otras bibliotecas aceleradas por GPU.  
+  * Entrenamiento con precisión mixta (FP16) para mejorar uso de memoria.  
+  * Aplicar estrategias como Early Stopping + LR Scheduler para mejorar eficiencia sin comprometer precisión.  
+  * Validación estadística con pruebas como t-test o ANOVA.
 
 ---
+
+#### 4.1 Resultados experimentales
+
+**Configuraciones evaluadas:** 8 combinaciones con distintas funciones de pérdida (BCELoss, MSELoss), optimizadores (Adam, SGD), tasas de aprendizaje (0.001, 0.1) y épocas (10, 30).  
+**Métricas registradas:** Precisión, tiempo de entrenamiento, tiempo total, desviación estándar.
+
+- **Precisión por configuración**:  
+  - BCELoss + Adam + LR=0.001 → 92.5% (±0.8)  
+  - BCELoss + SGD + LR=0.1 → 88.3% (±1.5)  
+  - MSELoss en general no superó 40% de precisión
+
+> Conclusión: BCELoss es superior a MSELoss para clasificación binaria.
+
+**Figura 1. Precisión promedio por configuración**  
+![Figura 1: Precisión por configuración](./figures/fig1_precision_config.png)
+
+- **Tiempo de entrenamiento**:  
+  - 30 épocas: promedio ~2850ms  
+  - 10 épocas: promedio ~1020ms  
+  - Adam mostró menor varianza temporal que SGD.
+
+> Conclusión: El tiempo escala linealmente con el número de épocas. Adam ofrece convergencia más estable.
+
+**Figura 2. Tiempo de entrenamiento por configuración**  
+![Figura 2: Tiempo de entrenamiento](./figures/fig2_training_time.png)
+
+- **Tiempo total de ejecución**:  
+  - Configuraciones con LR=0.1 fueron ~28% más rápidas en promedio.
+
+> Conclusión: Tasas de aprendizaje más altas aceleran el proceso, pero deben balancearse con estabilidad.
+
+**Figura 3. Tiempo total de ejecución por tasa de aprendizaje**  
+![Figura 3: Tiempo total](./figures/fig3_total_time.png)
+
+---
+
+#### 4.2 Análisis cruzado de hiperparámetros
+
+- **Épocas vs Precisión**:  
+**Figura 4. Precisión vs Épocas**  
+![Figura 4: Precisión vs Épocas](./figures/fig4_precision_epochs.png)  
+  - Las ganancias de precisión son notorias al pasar de 10 a 30 épocas, pero se observa rendimiento decreciente después de cierto umbral.
+
+- **Learning Rate vs Precisión**:  
+**Figura 5. Precisión vs Learning Rate (por optimizador)**  
+![Figura 5: Precisión vs LR](./figures/fig5_precision_lr.png)  
+  - Adam obtiene mejor rendimiento con LR=0.001.  
+  - SGD mejora con LR=0.1.
+
+- **Interacciones**:  
+  - BCELoss + Adam + LR=0.001 → 92.5% con ~1250ms  
+  - BCELoss + SGD + LR=0.1 → 85.1% con ~890ms
+
+> Conclusión: No hay una regla lineal; la combinación entre optimizador y tasa de aprendizaje debe calibrarse cuidadosamente.
+
+---
+
+
 
 ### 5. Trabajo en equipo
 
@@ -403,7 +470,7 @@ Una ejecución exitosa de todos los tests garantiza que el sistema está listo p
 | Investigación teórica     | Jhogan Haldo Pachacutec Aguilar | Documentar bases teóricas |
 | Diseño de la arquitectura | Alumno B | UML y esquemas de clases  |
 | Implementación del modelo | Alumno C | Código C++ de la NN       |
-| Pruebas y benchmarking    | Alumno D | Generación de métricas    |
+| Pruebas y benchmarking    | Alessandr Facundo Freed Monzon Gallegos | Generación de métricas    |
 | Documentación y demo      | Alumno E | Tutorial y video demo     |
 
 > *Actualizar con tareas y nombres reales.*
