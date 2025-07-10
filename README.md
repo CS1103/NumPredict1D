@@ -442,22 +442,40 @@ Una ejecución exitosa de todos los tests garantiza que el sistema está listo p
 
 #### 4.2 Análisis cruzado de hiperparámetros
 
-- **Épocas vs Precisión**:  
-**Figura 4. Precisión vs Épocas**  
-![Figura 4: Precisión vs Épocas](./figures/fig4_precision_epochs.png)  
-  - Las ganancias de precisión son notorias al pasar de 10 a 30 épocas, pero se observa rendimiento decreciente después de cierto umbral.
+Dado que algunas variables (como épocas) solo fueron evaluadas con dos puntos, se optó por representar los resultados de manera tabular, facilitando su lectura y análisis.
 
-- **Learning Rate vs Precisión**:  
-**Figura 5. Precisión vs Learning Rate (por optimizador)**  
-![Figura 5: Precisión vs LR](./figures/fig5_precision_lr.png)  
-  - Adam obtiene mejor rendimiento con LR=0.001.  
-  - SGD mejora con LR=0.1.
+##### Tabla 1. Comparativa de combinaciones de hiperparámetros
 
-- **Interacciones**:  
-  - BCELoss + Adam + LR=0.001 → 92.5% con ~1250ms  
-  - BCELoss + SGD + LR=0.1 → 85.1% con ~890ms
+| Optimizador | Learning Rate | Función de pérdida | Precisión (%) | Tiempo aprox. |
+|-------------|----------------|---------------------|----------------|----------------|
+| Adam        | 0.001          | BCELoss             | 92.5%          | ~1250 ms       |
+| SGD         | 0.1            | BCELoss             | 85.1%          | ~890 ms        |
 
-> Conclusión: No hay una regla lineal; la combinación entre optimizador y tasa de aprendizaje debe calibrarse cuidadosamente.
+> **Conclusión:** No se observa una regla lineal entre hiperparámetros y rendimiento. La combinación de Adam con LR=0.001 logra el mejor balance entre precisión y eficiencia, aunque SGD es más rápido en términos absolutos.
+
+---
+
+#### 4.3 Rendimiento general del modelo
+
+**Arquitectura:** MLP con una capa oculta de 16 neuronas  
+**Dataset:** 2002 mensajes en español y 5574 en inglés (80% entrenamiento, 20% prueba)  
+**Activaciones:** ReLU (oculta) + Sigmoid (salida)  
+**Función de pérdida:** Binary Cross-Entropy (BCELoss)  
+**Batch size:** 8  
+**Épocas:** 20  
+**Precisión esperada:** >95% (frecuentemente >99%)
+
+##### Tabla 2. Comparativa por optimizador y uso de stopwords
+
+| Optimizador | Stopwords | Tiempo de entrenamiento | Precisión (dataset)      |
+|-------------|-----------|--------------------------|---------------------------|
+| SGD         | No        | 20.48 minutos            | >95% (usualmente >99%)    |
+| SGD         | Sí        | 14.34 minutos            | >95% (usualmente >99%)    |
+| Adam        | No        | 48.74 minutos            | >95% (usualmente >99%)    |
+| Adam        | Sí        | 34.12 minutos            | >95% (usualmente >99%)    |
+
+**Justificación de Adam + BCELoss:**  
+Adam se selecciona por su eficiencia adaptativa en clasificación binaria, acelerando la convergencia frente a SGD. BCELoss, por su parte, es la opción estándar en tareas de clasificación binaria, modelando de manera adecuada la probabilidad de pertenencia a la clase positiva (spam) y penalizando con fuerza los errores de predicción.
 
 ---
 
