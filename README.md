@@ -20,7 +20,7 @@
 10. [Licencia](#licencia)
 ---
 
-### Datos generales
+### 1. Datos generales
 
 * **Tema**: Redes Neuronales en AI
 * **Grupo**: `Port:8080`
@@ -34,7 +34,7 @@
 
 ---
 
-### Requisitos e instalación
+### 2. Requisitos e instalación
 
 1. **Compilador**: GCC 11 o superior (C++20)
 2. **Dependencias**:
@@ -52,11 +52,11 @@
 
 ---
 
-### 1. Investigación teórica
+### 3. Investigación teórica
 
 **Objetivo:** Explorar los fundamentos teóricos de las redes neuronales para sustentar la implementación modular de una red neuronal en C++, orientada a la clasificación multiclase mediante entrenamiento supervisado.
 
-#### 1.1 Historia y evolución de las redes neuronales
+#### 3.1 Historia y evolución de las redes neuronales
 
 El estudio de las redes neuronales artificiales (ANNs) se remonta a la década de 1940, cuando Warren McCulloch y Walter Pitts propusieron el primer modelo matemático de neurona artificial inspirado en el funcionamiento del cerebro humano. Pero fue en 1958 cuando Frank Rosenblatt desarrolló el perceptrón, uno de los primeros modelos de redes neuronales artificiales. Este consiste en una unidad que recibe múltiples entradas, las pondera, las suma y aplica una función de activación (como el escalón) para generar una salida. Este modelo fue capaz de aprender mediante un proceso de ajuste de pesos, pero solo podía resolver problemas linealmente separables [1].
 
@@ -64,7 +64,7 @@ El campo avanzó significativamente en 1986 con la introducción del algoritmo d
 
 Así, en la última década, el campo experimentó una transformación radical con el auge del *deep learning*, impulsado por mejoras en hardware (GPU), grandes volúmenes de datos y nuevos algoritmos. Investigaciones de LeCun, Bengio y Hinton consolidaron el uso de redes neuronales profundas para tareas como visión por computadora, reconocimiento de voz y procesamiento de lenguaje natural [3].
 
-#### 1.2 Arquitecturas principales de redes neuronales
+#### 3.2 Arquitecturas principales de redes neuronales
 
 ##### a) Perceptrón Multicapa (MLP)
 
@@ -85,7 +85,7 @@ La función ReLU (Rectified Linear Unit) se ha convertido en el estándar en red
 
 Por su parte, la función Sigmoid tiene la forma σ(x) = 1 / (1 + e^(-x)) y transforma cualquier valor real en un rango entre 0 y 1, interpretado como probabilidad. Aunque puede sufrir saturación para valores extremos (lo cual afecta la retropropagación en capas ocultas), sigue siendo especialmente útil en la capa de salida de redes para clasificación binaria o multiclase con etiquetas *one-hot*, ya que cada neurona puede modelar la probabilidad independiente de cada clase [4]. En este proyecto, la función Sigmoid se utiliza correctamente en la última capa de la red para producir una salida de 10 dimensiones (una por clase), facilitando el uso de la función de pérdida Binary Cross-Entropy, que requiere salidas en formato probabilístico.
 
-#### 1.3 Algoritmos de entrenamiento
+#### 3.3 Algoritmos de entrenamiento
 
 ##### a) Backpropagation
 
@@ -113,11 +113,11 @@ Por el contrario, Adaptive Moment Estimation (Adam) combina los beneficios de Ad
 
 ---
 
-### 2. Diseño e implementación
+### 4. Diseño e implementación
 
-#### 2.1 Arquitectura de la solución
+#### 4.1 Arquitectura de la solución
 
-##### 2.1.1 Patrones de diseño implementados
+##### 4.1.1 Patrones de diseño implementados
 
 La arquitectura de la red neuronal desarrollada integra algunos patrones de diseño fundamentales, los cuales aportan flexibilidad, extensibilidad y mantenibilidad al sistema. A continuación, se describen los principales patrones empleados, su propósito general y la forma en que se materializan en la implementación:
 
@@ -138,7 +138,7 @@ Este patrón define una familia de algoritmos intercambiables, permitiendo selec
 - **Funciones de pérdida**: La interfaz `ILoss<T,DIMS>` encapsula distintas métricas de error (MSELoss, BCELoss), lo que permite sustituir la función objetivo sin modificar la lógica general del entrenamiento.
 - **Capas de activación**: Las clases ReLU y Sigmoid implementan la interfaz `ILayer<T>`, permitiendo utilizar diferentes funciones de activación en la misma arquitectura, con la posibilidad de combinarlas de forma flexible.
 
-##### 2.1.2 Estructura de carpetas
+##### 4.1.2 Estructura de carpetas
 
 Para garantizar la organización, la escalabilidad y la mantenibilidad del proyecto, se ha adoptado una estructura de carpetas modular que facilita la separación lógica de responsabilidades y la integración de los diferentes componentes de la red neuronal. A continuación, se detalla la jerarquía de directorios y archivos que conforman el proyecto NumPredictID, donde se distribuyen los módulos de procesamiento de datos, definición de la arquitectura neuronal, funciones de pérdida, optimizadores, pruebas unitarias, documentación y otros recursos necesarios para el correcto funcionamiento y la extensibilidad del sistema:
 
@@ -196,9 +196,9 @@ NumPredictID/
 └── README.md
 ```
 
-#### 2.2 Manual de uso y casos de prueba
+#### 4.2 Manual de uso y casos de prueba
 
-##### 2.2.1 Cómo ejecutar
+##### 4.2.1 Cómo ejecutar
 
 El sistema de red neuronal se puede ejecutar de múltiples maneras según las necesidades del usuario. Los ejecutables se encuentran en la carpeta `build/` después de la compilación, y también pueden ejecutarse directamente desde IDEs como CLion usando las configuraciones de ejecución disponibles.
 
@@ -232,7 +232,7 @@ Este comando lanza un sistema interactivo que permite:
 ./build/test_convergence      # Prueba capacidad de convergencia
 ```
 
-##### 2.2.2 Casos de prueba detallados
+##### 4.2.2 Casos de prueba detallados
 
 El sistema incluye una suite completa de tests unitarios que valida el correcto funcionamiento de todos los componentes críticos de la red neuronal:
 
@@ -348,18 +348,55 @@ Una ejecución exitosa de todos los tests garantiza que el sistema está listo p
 
 ---
 
-### 3. Ejecución
+### 5. Ejecución
 
-> **Demo de ejemplo**: Video/demo alojado en `docs/demo.mp4`.
-> Pasos:
->
-> 1. Preparar datos de entrenamiento (formato CSV).
-> 2. Ejecutar comando de entrenamiento.
-> 3. Evaluar resultados con script de validación.
+> **Demo de ejemplo**: Debido al tamaño del video (superior a 100 MB), no fue posible subirlo directamente al repositorio. 
+> 
+> **Links de acceso**:
+> - **Drive completo**: [Carpeta del proyecto](https://drive.google.com/drive/folders/1LJQRHxiRy5JO8kIOXban-Tq2P_5ffid0?usp=sharing)
+> - **Video presentación/demo**: [Ver demo](https://drive.google.com/file/d/1IY1cMnM1BxIKZsO6poYPRSufODBMg2oZ/view?usp=sharing)
+
+#### Pasos para ejecutar el proyecto:
+
+**1. Compilar el proyecto:**
+```bash
+mkdir build && cd build
+cmake ..
+make
+```
+
+**2. Ejecutar la aplicación:**
+```bash
+./ExperimentRunner
+```
+
+**3. Usar el menú interactivo:**
+```
+=== SISTEMA DE EXPERIMENTOS DE RED NEURONAL ===
+Selecciona una opción:
+1. Ver configuraciones disponibles
+2. Ejecutar experimento específico
+3. Ejecutar todos los experimentos
+4. Ejecutar experimentos seleccionados
+5. Ver resultados actuales
+6. Salir
+Opción:
+```
+
+> **Recomendación**: Selecciona la opción `3` para ejecutar todos los experimentos disponibles.
+
+#### Dataset utilizado:
+
+El proyecto utiliza una versión modificada del dataset MNIST clásico para optimizar el rendimiento computacional:
+
+- **`dataset/training/mnist8_train.csv`**: Conjunto de entrenamiento que contiene 1,000 muestras del dataset MNIST original. Las imágenes han sido redimensionadas de 28x28 píxeles a 8x8 píxeles para reducir la complejidad computacional.
+- **`dataset/training/mnist8_test.csv`**: Conjunto de prueba con 200 muestras, manteniendo la proporción estándar de división 80/20 entre entrenamiento y prueba.
+
+**Herramienta de generación**: Los datos fueron procesados utilizando [este notebook de Google Colab](https://colab.research.google.com/drive/1_Ah2BdZruUvz3_a9uVtyQcU7Z2ydoeAh?usp=sharing) que implementa la redimensionalización y el preprocesamiento necesario.
 
 ---
 
-### 4. Análisis del rendimiento
+### 6. Análisis del rendimiento
 
 * **Métricas de ejemplo**:
 
@@ -386,7 +423,7 @@ Una ejecución exitosa de todos los tests garantiza que el sistema está listo p
 
 ---
 
-#### 4.1 Resultados experimentales
+#### 6.1 Resultados experimentales
 
 **Configuraciones evaluadas:** 8 combinaciones con distintas funciones de pérdida (BCELoss, MSELoss), optimizadores (Adam, SGD), tasas de aprendizaje (0.001, 0.1) y épocas (10, 30).  
 **Métricas registradas:** Precisión, tiempo de entrenamiento, tiempo total, desviación estándar.
@@ -421,7 +458,7 @@ Una ejecución exitosa de todos los tests garantiza que el sistema está listo p
 
 ---
 
-#### 4.2 Análisis cruzado de hiperparámetros
+#### 6.2 Análisis cruzado de hiperparámetros
 
 Dado que algunas variables (como épocas) solo fueron evaluadas con dos puntos, se optó por representar los resultados de manera tabular, facilitando su lectura y análisis.
 
@@ -436,7 +473,7 @@ Dado que algunas variables (como épocas) solo fueron evaluadas con dos puntos, 
 
 ---
 
-#### 4.3 Rendimiento general del modelo
+#### 6.3 Rendimiento general del modelo
 
 **Arquitectura:** MLP con una capa oculta de 16 neuronas  
 **Dataset:** 2002 mensajes en español y 5574 en inglés (80% entrenamiento, 20% prueba)  
@@ -460,7 +497,7 @@ Adam se selecciona por su eficiencia adaptativa en clasificación binaria, acele
 
 ---
 
-### 5. Trabajo en equipo
+### 7. Trabajo en equipo
 
 | Tarea                     | Miembro  | Rol                       |
 | ------------------------- | -------- | ------------------------- |
@@ -477,7 +514,7 @@ Los cambios se registraron con mensajes de commit siguiendo el estándar Convent
 
 ---
 
-### 6. Conclusiones
+### 8. Conclusiones
 
 La evaluación de las distintas configuraciones revela que la combinación BCELoss\_Adam\_High (función de pérdida BCELoss, optimizador Adam, tasa de aprendizaje 0.001 y 10 épocas) es la que obtuvo el mejor desempeño global, alcanzando una precisión del 89,50%. Este resultado sugiere que una tasa de aprendizaje baja, sumada a las adaptaciones automáticas de Adam, permite una convergencia más rápida y estable en pocas épocas, maximizando la efectividad del entrenamiento sin necesidad de prolongarlo excesivamente.
 
@@ -494,7 +531,7 @@ En conclusión, para este problema de clasificación multiclase sobre imágenes 
 ---
 
 
-### 7. Bibliografía
+### 9. Bibliografía
 
 [1] F. Rosenblatt, “The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain,” *Psychological Review*, vol. 65, no. 6, pp. 386–408, 1958.
 
@@ -513,7 +550,7 @@ En conclusión, para este problema de clasificación multiclase sobre imágenes 
 
 ---
 
-### Licencia
+### 10. Licencia
 
 Este proyecto usa la licencia **MIT**. Ver [LICENSE](LICENSE) para detalles.
 
