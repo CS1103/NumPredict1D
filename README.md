@@ -4,7 +4,7 @@
 
 ### **Descripción**
 
-> Ejemplo: Implementación de una red neuronal multicapa en C++ para clasificación de dígitos manuscritos.
+> Implementación de una red neuronal multicapa en C++ para la clasificación de dígitos manuscritos del dataset MNIST, desarrollada desde cero utilizando programación genérica con templates. La arquitectura emplea tres capas densas (64→128→64→10) y funciones de activación ReLU y Sigmoid, con el objetivo de demostrar la viabilidad de enfoques modulares y flexibles en el reconocimiento de patrones visuales.
 
 ### Contenidos
 
@@ -23,38 +23,32 @@
 ### Datos generales
 
 * **Tema**: Redes Neuronales en AI
-* **Grupo**: `group_3_custom_name`
+* **Grupo**: `Port:8080`
 * **Integrantes**:
 
   * Jhogan Haldo Pachacutec Aguilar – 202410582 (Responsable de investigación teórica)
-  * Alumno B – 209900002 (Desarrollo de la arquitectura)
-  * Alumno C – 209900003 (Implementación del modelo)
+  * Fabricio Alonso Lanche Pacsi – 202410577 (Desarrollo de la arquitectura)
+  * Jean Luka Terrazo Santiago – 202410422 (Implementación del modelo)
   * Alessandro Facundo Freed Monzón Gallegos – 202410414 (Pruebas y benchmarking)
-  * Alumno E – 209900005 (Documentación y demo)
-
-> *Nota: Reemplazar nombres y roles reales.*
+  * Josué Renzo Hernández Yataco – 202410575 (Documentación y demo)
 
 ---
 
 ### Requisitos e instalación
 
-1. **Compilador**: GCC 11 o superior
+1. **Compilador**: GCC 11 o superior (C++20)
 2. **Dependencias**:
-
-   * CMake 3.18+
-   * Eigen 3.4
-   * \[Otra librería opcional]
+   * CMake 3.20+
+   * Compilador compatible con C++20
 3. **Instalación**:
 
    ```bash
-   git clone https://github.com/EJEMPLO/proyecto-final.git
-   cd proyecto-final
+   git clone https://github.com/CS1103/NumPredict1D.git
+   cd NumPredict1D
    mkdir build && cd build
    cmake ..
    make
    ```
-
-> *Ejemplo de repositorio y comandos, ajustar según proyecto.*
 
 ---
 
@@ -119,15 +113,15 @@ Por el contrario, Adaptive Moment Estimation (Adam) combina los beneficios de Ad
 
 ---
 
-# 2. Diseño e implementación
+### 2. Diseño e implementación
 
-## 2.1 Arquitectura de la solución
+#### 2.1 Arquitectura de la solución
 
-### 2.1.1 Patrones de diseño implementados
+##### 2.1.1 Patrones de diseño implementados
 
-La arquitectura de la red neuronal desarrollada integra varios patrones de diseño fundamentales, los cuales aportan flexibilidad, extensibilidad y mantenibilidad al sistema. A continuación, se describen los principales patrones empleados, su propósito general y la forma en que se materializan en la implementación:
+La arquitectura de la red neuronal desarrollada integra algunos patrones de diseño fundamentales, los cuales aportan flexibilidad, extensibilidad y mantenibilidad al sistema. A continuación, se describen los principales patrones empleados, su propósito general y la forma en que se materializan en la implementación:
 
-#### a) Factory Pattern (Patrón Fábrica)
+##### a) Factory Pattern (Patrón Fábrica)
 
 El patrón Factory tiene como objetivo delegar la creación de objetos a clases especializadas, evitando así acoplar el código cliente a implementaciones concretas. En este proyecto, se encuentra implementado en el archivo `nn_factory.h` mediante distintas fábricas responsables de encapsular la lógica de construcción e inicialización de los componentes principales:
 
@@ -136,7 +130,7 @@ El patrón Factory tiene como objetivo delegar la creación de objetos a clases 
 - **LossFactory**: Encargada de instanciar funciones de pérdida (MSE, BCE) según las predicciones y valores reales correspondientes.
 - **NeuralNetworkFactory**: Actúa como fachada unificada que delega la creación de componentes a las fábricas específicas, ofreciendo una interfaz única para construir redes neuronales completas de manera consistente y modular.
 
-#### b) Strategy Pattern (Patrón Estrategia)
+##### b) Strategy Pattern (Patrón Estrategia)
 
 Este patrón define una familia de algoritmos intercambiables, permitiendo seleccionar la estrategia más adecuada en tiempo de ejecución sin modificar el contexto en el que se utilizan. Su implementación se refleja principalmente en `nn_interfaces.h`, donde se abstraen comportamientos clave del entrenamiento:
 
@@ -144,20 +138,7 @@ Este patrón define una familia de algoritmos intercambiables, permitiendo selec
 - **Funciones de pérdida**: La interfaz `ILoss<T,DIMS>` encapsula distintas métricas de error (MSELoss, BCELoss), lo que permite sustituir la función objetivo sin modificar la lógica general del entrenamiento.
 - **Capas de activación**: Las clases ReLU y Sigmoid implementan la interfaz `ILayer<T>`, permitiendo utilizar diferentes funciones de activación en la misma arquitectura, con la posibilidad de combinarlas de forma flexible.
 
-#### c) Template Method Pattern (Patrón Método Plantilla)
-
-El patrón Template Method establece el esqueleto de un algoritmo en un método base, delegando a subclases o parámetros la definición de ciertos pasos específicos, permitiendo así personalizar partes del comportamiento sin modificar la estructura general. En este caso, se encuentra implementado en el método `train()` de la clase `NeuralNetwork`, que define el flujo completo del proceso de entrenamiento:
-
-- Validación de parámetros y de la estructura de la red.
-- Inicialización del optimizador.
-- Iteración a lo largo de las épocas.
-- Procesamiento por lotes, incluyendo la propagación hacia adelante, cálculo de la pérdida y retropropagación.
-- Actualización de parámetros mediante el optimizador.
-- Cálculo de métricas y registro de resultados.
-
-La especificidad de las funciones de pérdida y del optimizador se inyecta mediante parámetros de plantilla, lo que permite modificar el comportamiento del entrenamiento con alta flexibilidad, manteniendo la estructura global del algoritmo intacta.
-
-### 2.1.2 Estructura de carpetas
+##### 2.1.2 Estructura de carpetas
 
 Para garantizar la organización, la escalabilidad y la mantenibilidad del proyecto, se ha adoptado una estructura de carpetas modular que facilita la separación lógica de responsabilidades y la integración de los diferentes componentes de la red neuronal. A continuación, se detalla la jerarquía de directorios y archivos que conforman el proyecto NumPredictID, donde se distribuyen los módulos de procesamiento de datos, definición de la arquitectura neuronal, funciones de pérdida, optimizadores, pruebas unitarias, documentación y otros recursos necesarios para el correcto funcionamiento y la extensibilidad del sistema:
 
@@ -215,13 +196,13 @@ NumPredictID/
 └── README.md
 ```
 
-## 2.2 Manual de uso y casos de prueba
+#### 2.2 Manual de uso y casos de prueba
 
-### 2.2.1 Cómo ejecutar
+##### 2.2.1 Cómo ejecutar
 
 El sistema de red neuronal se puede ejecutar de múltiples maneras según las necesidades del usuario. Los ejecutables se encuentran en la carpeta `build/` después de la compilación, y también pueden ejecutarse directamente desde IDEs como CLion usando las configuraciones de ejecución disponibles.
 
-#### Experimentos principales
+##### Experimentos principales
 ```bash
 # Ejecutar el sistema principal de experimentos
 ./build/ExperimentRunner
@@ -234,13 +215,13 @@ Este comando lanza un sistema interactivo que permite:
 - Ejecutar experimentos seleccionados
 - Visualizar resultados actuales
 
-#### Ayuda y documentación
+##### Ayuda y documentación
 ```bash
 # Mostrar ejecutables del programa y opciones disponibles
 ./build/show_help
 ```
 
-#### Ejecución de tests
+##### Ejecución de tests
 ```bash
 # Ejecutar todos los tests unitarios en secuencia
 ./build/run_all_tests
@@ -251,11 +232,11 @@ Este comando lanza un sistema interactivo que permite:
 ./build/test_convergence      # Prueba capacidad de convergencia
 ```
 
-### 2.2.2 Casos de prueba detallados
+##### 2.2.2 Casos de prueba detallados
 
 El sistema incluye una suite completa de tests unitarios que valida el correcto funcionamiento de todos los componentes críticos de la red neuronal:
 
-#### a) Test unitario de capa densa (`test_dense_layer`)
+##### a) Test unitario de capa densa (`test_dense_layer`)
 - **Ejecutable**: `./build/test_dense_layer`
 - **Propósito**: Valida el funcionamiento completo de las capas densas (fully connected)
 - **Casos específicos cubiertos**:
@@ -265,7 +246,7 @@ El sistema incluye una suite completa de tests unitarios que valida el correcto 
   - **Manejo de lotes**: Prueba el procesamiento con diferentes tamaños de batch (1, 10, 100 muestras)
   - **Transformaciones matriciales**: Confirma que las operaciones de multiplicación matriz-vector se ejecuten correctamente
 
-#### b) Test de funciones de activación (`test_activations`)
+##### b) Test de funciones de activación (`test_activations`)
 - **Ejecutable**: `./build/test_activations`
 - **Propósito**: Verifica la implementación correcta de las funciones de activación y sus derivadas
 - **Casos específicos cubiertos**:
@@ -283,7 +264,7 @@ El sistema incluye una suite completa de tests unitarios que valida el correcto 
     - Gradientes de Sigmoid: valores positivos menores que 1
     - Correcta implementación de las derivadas
 
-#### c) Test de convergencia (`test_convergence`)
+##### c) Test de convergencia (`test_convergence`)
 - **Ejecutable**: `./build/test_convergence`
 - **Propósito**: Valida que el modelo puede converger exitosamente en diferentes tipos de problemas
 - **Casos específicos cubiertos**:
@@ -308,7 +289,7 @@ El sistema incluye una suite completa de tests unitarios que valida el correcto 
     - Medición de tiempos de entrenamiento
     - Verificación de estabilidad numérica
 
-#### d) Suite completa de tests (`run_all_tests`)
+##### d) Suite completa de tests (`run_all_tests`)
 - **Ejecutable**: `./build/run_all_tests`
 - **Propósito**: Ejecuta todos los tests unitarios en secuencia proporcionando un reporte completo
 - **Características**:
@@ -318,7 +299,7 @@ El sistema incluye una suite completa de tests unitarios que valida el correcto 
   - Identificación específica de tests fallidos
   - Resumen estadístico de la suite completa
 
-### Criterios de éxito
+##### Criterios de éxito
 
 Un sistema funcionando correctamente debe cumplir:
 - **Tasa de éxito**: 100% en todos los tests unitarios
@@ -327,16 +308,16 @@ Un sistema funcionando correctamente debe cumplir:
 - **Estabilidad**: Ausencia de errores numéricos o desbordamientos
 - **Rendimiento**: Tiempos de ejecución razonables
 
-### Estructura de archivos (entrada/salida)
+##### Estructura de archivos (entrada/salida)
 
-#### Archivos de entrada esperados:
+##### a) Archivos de entrada esperados:
 - **Entrenamiento**: `../dataset/training/mnist8_train.csv`
 - **Prueba**: `../dataset/training/mnist8_test.csv`
 
-#### Archivos de salida generados:
+#####  b) Archivos de salida generados:
 - **Resultados**: `../dataset/results/experiment_results_[numero].csv`
 
-### Ejemplo de flujo de trabajo
+##### Ejemplo de flujo de trabajo
 
 ```bash
 # 1. Compilar el proyecto
@@ -354,7 +335,7 @@ make
 # Los archivos CSV contienen métricas detalladas de cada experimento
 ```
 
-### Interpretación de resultados
+##### Interpretación de resultados
 
 Los tests proporcionan información detallada sobre:
 - **Estado de componentes**: Cada test indica si los componentes funcionan correctamente
@@ -415,7 +396,7 @@ Una ejecución exitosa de todos los tests garantiza que el sistema está listo p
   - BCELoss + SGD + LR=0.1 → 88.3% (±1.5)  
   - MSELoss en general no superó 40% de precisión
 
-> Conclusión: BCELoss es superior a MSELoss para clasificación binaria.
+> Conclusión Parcial: BCELoss es superior a MSELoss para clasificación binaria.
 
 **Figura 1. Precisión promedio por configuración**  
 ![Figura 1: Precisión por configuración](./figures/fig1_precision_config.png)
@@ -425,7 +406,7 @@ Una ejecución exitosa de todos los tests garantiza que el sistema está listo p
   - 10 épocas: promedio ~1020ms  
   - Adam mostró menor varianza temporal que SGD.
 
-> Conclusión: El tiempo escala linealmente con el número de épocas. Adam ofrece convergencia más estable.
+> Conclusión Parcial: El tiempo escala linealmente con el número de épocas. Adam ofrece convergencia más estable.
 
 **Figura 2. Tiempo de entrenamiento por configuración**  
 ![Figura 2: Tiempo de entrenamiento](./figures/fig2_training_time.png)
@@ -433,7 +414,7 @@ Una ejecución exitosa de todos los tests garantiza que el sistema está listo p
 - **Tiempo total de ejecución**:  
   - Configuraciones con LR=0.1 fueron ~28% más rápidas en promedio.
 
-> Conclusión: Tasas de aprendizaje más altas aceleran el proceso, pero deben balancearse con estabilidad.
+> Conclusión Parcial: Tasas de aprendizaje más altas aceleran el proceso, pero deben balancearse con estabilidad.
 
 **Figura 3. Tiempo total de ejecución por tasa de aprendizaje**  
 ![Figura 3: Tiempo total](./figures/fig3_total_time.png)
@@ -451,7 +432,7 @@ Dado que algunas variables (como épocas) solo fueron evaluadas con dos puntos, 
 | Adam        | 0.001          | BCELoss             | 92.5%          | ~1250 ms       |
 | SGD         | 0.1            | BCELoss             | 85.1%          | ~890 ms        |
 
-> **Conclusión:** No se observa una regla lineal entre hiperparámetros y rendimiento. La combinación de Adam con LR=0.001 logra el mejor balance entre precisión y eficiencia, aunque SGD es más rápido en términos absolutos.
+> **Conclusión Parcial:** No se observa una regla lineal entre hiperparámetros y rendimiento. La combinación de Adam con LR=0.001 logra el mejor balance entre precisión y eficiencia, aunque SGD es más rápido en términos absolutos.
 
 ---
 
@@ -479,19 +460,20 @@ Adam se selecciona por su eficiencia adaptativa en clasificación binaria, acele
 
 ---
 
-
-
 ### 5. Trabajo en equipo
 
 | Tarea                     | Miembro  | Rol                       |
 | ------------------------- | -------- | ------------------------- |
 | Investigación teórica     | Jhogan Haldo Pachacutec Aguilar | Documentar bases teóricas |
-| Diseño de la arquitectura | Alumno B | UML y esquemas de clases  |
-| Implementación del modelo | Alumno C | Código C++ de la NN       |
-| Pruebas y benchmarking    | Alessandr Facundo Freed Monzon Gallegos | Generación de métricas    |
-| Documentación y demo      | Alumno E | Tutorial y video demo     |
+| Diseño de la arquitectura | Fabricio Alonso Lanche Pacsi | UML y esquemas de clases  |
+| Implementación del modelo | Jean Luka Terrazo Santiago | Código C++ de la NN       |
+| Pruebas y benchmarking    | Alessandro Facundo Freed Monzón Gallegos | Generación de métricas    |
+| Documentación y demo      | Josué Renzo Hernández Yataco | Tutorial y video demo     |
 
-> *Actualizar con tareas y nombres reales.*
+
+#### Flujo colaborativo:
+El equipo mantuvo un flujo de trabajo colaborativo ordenado utilizando GitHub. Cada tarea se gestionó mediante issues, a partir de los cuales se creaban ramas (branches) específicas. 
+Los cambios se registraron con mensajes de commit siguiendo el estándar Conventional Commits, lo que facilitó la comprensión y seguimiento del historial del proyecto. Luego, cada conjunto de cambios se integró a la rama principal mediante pull requests, los cuales fueron revisados antes de hacer merge. Este flujo (issue → branch → commit → PR → merge) permitió una coordinación efectiva y controlada del desarrollo.
 
 ---
 
@@ -510,6 +492,7 @@ Otro aspecto relevante es la relación entre tiempo de entrenamiento y precisió
 En conclusión, para este problema de clasificación multiclase sobre imágenes con 64 características, la configuración óptima combina la función de pérdida BCELoss con el optimizador Adam, una tasa de aprendizaje de 0.001 y un entrenamiento de 10 épocas. Este esquema ofrece el mejor balance entre rendimiento y eficiencia, confirmando la importancia de ajustar cuidadosamente tanto la función de pérdida como el optimizador y la tasa de aprendizaje. Como recomendaciones para futuras mejoras, resulta aconsejable implementar mecanismos de Early Stopping y Learning Rate Scheduler para adaptar dinámicamente la tasa de aprendizaje y evitar el sobreajuste; explorar optimizadores avanzados como AdamW o AMSGrad que incorporan regularización y mayor estabilidad numérica; añadir técnicas de normalización (Batch o Layer Normalization) y data augmentation para robustecer la generalización; paralelizar el procesamiento de lotes mediante OpenMP o TBB y aprovechar aceleración por GPU (cuBLAS, CUDA) para reducir los tiempos de entrenamiento; y, finalmente, emplear herramientas de gestión de experimentos (Weights & Biases, MLflow) para un seguimiento sistemático de hiperparámetros, métricas y resultados.
 
 ---
+
 
 ### 7. Bibliografía
 
