@@ -497,10 +497,17 @@ Adam se selecciona por su eficiencia adaptativa en clasificación binaria, acele
 
 ### 6. Conclusiones
 
-* **Logros**: Implementar NN desde cero, validar en dataset de ejemplo.
-* **Evaluación**: Calidad y rendimiento adecuados para propósito académico.
-* **Aprendizajes**: Profundización en backpropagation y optimización.
-* **Recomendaciones**: Escalar a datasets más grandes y optimizar memoria.
+La evaluación de las distintas configuraciones revela que la combinación BCELoss\_Adam\_High (función de pérdida BCELoss, optimizador Adam, tasa de aprendizaje 0.001 y 10 épocas) es la que obtuvo el mejor desempeño global, alcanzando una precisión del 89,50%. Este resultado sugiere que una tasa de aprendizaje baja, sumada a las adaptaciones automáticas de Adam, permite una convergencia más rápida y estable en pocas épocas, maximizando la efectividad del entrenamiento sin necesidad de prolongarlo excesivamente.
+
+Al analizar el impacto del optimizador, se observa que Adam superó de manera consistente a SGD en todas las pruebas realizadas. Por ejemplo, con BCELoss y LR alta, Adam obtuvo 89,50% frente al 88,00% de SGD, y con MSELoss y LR alta, Adam alcanzó 88,00% frente al 72,00% de SGD. Estas diferencias confirman que Adam, al ajustar la tasa de aprendizaje de cada parámetro según las características del gradiente, acelera el proceso de entrenamiento y mejora la precisión final.
+
+En cuanto a la función de pérdida, BCELoss demostró ser más adecuada que MSELoss para este problema de clasificación multiclase con salidas sigmoidales. Mientras BCELoss\_Adam\_High alcanzó un 89,50%, MSELoss\_Adam\_High se quedó en un 88,00%. Además, en configuraciones con SGD y LR baja, ambas pérdidas mostraron un desempeño muy bajo (11,50% para BCELoss y 13,50% para MSELoss), lo que indica que MSELoss no resulta óptima cuando se combina con salidas binarias o probabilísticas.
+
+La tasa de aprendizaje también ejerce un papel crucial: las configuraciones de LR alta (0.1) sólo rinden bien si se emplea un optimizador robusto como Adam o si se disponen de suficientes épocas de entrenamiento. Por ejemplo, BCELoss\_Adam\_Low (LR=0.1, 30 épocas) apenas supera el 51,50%, mientras que BCELoss\_SGD\_High (LR=0.1, 30 épocas) alcanza un 88,00%. En contraste, con Adam y una LR baja (0.001), se logra un alto rendimiento en tan solo 10 épocas, tal como refleja el 89,50% de BCELoss\_Adam\_High.
+
+Otro aspecto relevante es la relación entre tiempo de entrenamiento y precisión: no siempre más tiempo equivale a mejores resultados. BCELoss\_SGD\_High requirió 165 651 ms para llegar al 88,00%, mientras que BCELoss\_Adam\_High empleó solo 60 887 ms para alcanzar un 89,50%. Esto pone de manifiesto que Adam no solo mejora la precisión, sino que optimiza significativamente los recursos computacionales, reduciendo el tiempo necesario para entrenar el modelo.
+
+En conclusión, para este problema de clasificación multiclase sobre imágenes con 64 características, la configuración óptima combina la función de pérdida BCELoss con el optimizador Adam, una tasa de aprendizaje de 0.001 y un entrenamiento de 10 épocas. Este esquema ofrece el mejor balance entre rendimiento y eficiencia, confirmando la importancia de ajustar cuidadosamente tanto la función de pérdida como el optimizador y la tasa de aprendizaje. Como recomendaciones para futuras mejoras, resulta aconsejable implementar mecanismos de Early Stopping y Learning Rate Scheduler para adaptar dinámicamente la tasa de aprendizaje y evitar el sobreajuste; explorar optimizadores avanzados como AdamW o AMSGrad que incorporan regularización y mayor estabilidad numérica; añadir técnicas de normalización (Batch o Layer Normalization) y data augmentation para robustecer la generalización; paralelizar el procesamiento de lotes mediante OpenMP o TBB y aprovechar aceleración por GPU (cuBLAS, CUDA) para reducir los tiempos de entrenamiento; y, finalmente, emplear herramientas de gestión de experimentos (Weights & Biases, MLflow) para un seguimiento sistemático de hiperparámetros, métricas y resultados.
 
 ---
 
